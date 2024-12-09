@@ -1,3 +1,6 @@
 #ignore venu folder
 
 venv/
+
+#ignore .env file
+.env

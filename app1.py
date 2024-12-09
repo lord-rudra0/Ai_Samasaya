@@ -99,9 +99,11 @@ def generate_questions(text):
     return response.text
     
 # Home route
-@app.route('/')
-def home():
-    return render_template("index.html")
+@app.route("/")
+def index():
+    """Render the index page with chapter summaries and questions."""
+    return render_template("index.html", chapters=chapters_data, enumerate=enumerate)  # Pass chapters_data as chapters
+
 
 # Route to handle the uploaded PDF
 @app.route('/pdf', methods=['POST'])
@@ -136,6 +138,62 @@ def handle_pdf():
 
     # Render results in PDF.html
     return render_template("pdf.html", results=results)
+# Dummy data for testing (replace with dynamic processing for PDFs)
+chapters_data = {
+    "Chapter 1": {
+        "summary": "This is a brief summary of Chapter 1. It covers important concepts like X, Y, and Z.",
+        "questions": [
+            {
+                "question": "What is X?",
+                "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
+                "answer": 2
+            },
+            {
+                "question": "Which of the following is true about Y?",
+                "options": ["Option A", "Option B", "Option C", "Option D"],
+                "answer": 3
+            },
+        ],
+    },
+    "Chapter 2": {
+        "summary": "Chapter 2 explains the principles of A and B in detail.",
+        "questions": [
+            {
+                "question": "What is the principle of A?",
+                "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
+                "answer": 1
+            },
+            {
+                "question": "Which option best describes B?",
+                "options": ["Option A", "Option B", "Option C", "Option D"],
+                "answer": 4
+            },
+        ],
+    },
+}
+
+# @app.route("/")
+# def index():
+#     return render_template("index.html", chapters=chapters_data)
+
+@app.route("/check_answers", methods=["POST"])
+def check_answers():
+    user_answers = request.form
+    feedback = {}
+    for chapter, data in chapters_data.items():
+        chapter_feedback = []
+        for idx, question in enumerate(data["questions"]):
+            user_answer = user_answers.get(f"{chapter}_q{idx+1}")
+            if user_answer and int(user_answer) == question["answer"]:
+                chapter_feedback.append(f"Question {idx+1}: Correct!")
+            else:
+                chapter_feedback.append(f"Question {idx+1}: Incorrect. Restudy and try again.")
+        feedback[chapter] = chapter_feedback
+    return render_template("results.html", feedback=feedback)
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -75,7 +75,7 @@ def summarize_text(text):
     return response.text
 
 # Function to generate questions based on chapter content
-def generate_questions(text):
+def generate_questions(text, question, user_answer ):
     model = genai.GenerativeModel("gemini-1.5-flash")
     prompt = f"""
     Act like a professional teacher and summarize the following text in a way that is:
@@ -90,6 +90,9 @@ def generate_questions(text):
     Each question should be challenging and engaging, encouraging students to think critically and apply their knowledge.
     each question should be ask for answer when answer is entered it should show if it is correct or not.
     Here is the text to generate questions from:
+    Question: {question}
+    User's answer: {user_answer}
+    Provide 'Correct' if the answer is correct, or 'Incorrect' if the answer is wrong.
     
      \n\n{text}
     """
@@ -103,12 +106,13 @@ def generate_questions(text):
 def home():
     return render_template("index.html")
 
+
 # Route to handle the uploaded PDF
 @app.route('/pdf', methods=['POST'])
 def handle_pdf():
     if 'pdf' not in request.files:
         return render_template("error.html", message="No PDF uploaded.")
-
+    
     pdf_file = request.files['pdf']
     if pdf_file.filename == '':
         return render_template("error.html", message="No file selected.")
@@ -120,22 +124,38 @@ def handle_pdf():
     # Extract text from the uploaded PDF
     text = extract_text_from_pdf(pdf_path)
 
-    # Divide the text into chapters and give each chapter a heading 
-    
+    # Divide the text into chapters
     chapters = divide_into_chapters(text)
-    
 
-    
-    
-    
     results = {}
     for chapter, content in chapters.items():
         summary = summarize_text(content)
         questions = generate_questions(content)
         results[chapter] = {"summary": summary, "questions": questions}
 
-    # Render results in PDF.html
+    # Render results in pdf.html
     return render_template("pdf.html", results=results)
+
+@app.route("/check_answers", methods=["POST"])
+def check_answers(results, validate_answer):
+    user_answers = request.form
+    feedback = {}
+
+    # For each chapter, check the answers
+    for chapter, data in user_answers.items():
+        feedback_for_chapter = []
+        for question_id, answer in data.items():
+            # Get the question from the `results` data based on chapter and question_id
+            question_text = results.get(chapter, {}).get('questions', {}).get(question_id, '')
+            feedback_for_chapter.append({
+                'question': question_text,
+                'answer': answer,
+                'feedback': validate_answer(question_text, answer)
+            })
+        feedback[chapter] = feedback_for_chapter
+
+    return render_template("results.html", feedback=feedback)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

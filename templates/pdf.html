@@ -1,20 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>PDF Results</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDF Summary and Quiz</title>
   </head>
   <body>
-    <h1>Summarization and Questions</h1>
-    {% for chapter, content in results.items() %}
+    <h1>PDF Summary and Quiz</h1>
+
+    {% for chapter, data in results.items() %}
     <h2>{{ chapter }}</h2>
     <h3>Summary:</h3>
-    <div>{{ content.summary }}</div>
+    <p>{{ data['summary'] }}</p>
+
     <h3>Questions:</h3>
-    <ul>
-      {% for question in content.questions.splitlines() %}
-      <li>{{ question }}</li>
+    <form action="/check_answers" method="post">
+      {% for question in data['questions'] %}
+      <div>
+        <p>{{ question['question'] }}</p>
+        {% for idx, option in enumerate(question['options']) %}
+        <label>
+          <input
+            type="radio"
+            name="{{ chapter }}_q{{ loop.index }}"
+            value="{{ idx+1 }}"
+          />
+          {{ option }} </label
+        ><br />
+        {% endfor %}
+      </div>
       {% endfor %}
-    </ul>
+      <button type="submit">Submit Answers</button>
+    </form>
     {% endfor %}
   </body>
 </html>

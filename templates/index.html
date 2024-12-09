@@ -1,13 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>PDF Summarization and QA</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDF Question Generator</title>
   </head>
   <body>
-    <h1>Upload a PDF</h1>
-    <form action="/pdf" method="POST" enctype="multipart/form-data">
-      <input type="file" name="pdf" accept="application/pdf" required />
-      <button type="submit">Upload and Process</button>
+    <h1>Upload Your PDF for Summary and Quiz</h1>
+    <form action="/pdf" method="post" enctype="multipart/form-data">
+      <label for="pdf">Choose PDF:</label>
+      <input
+        type="file"
+        id="pdf"
+        name="pdf"
+        accept="application/pdf"
+        required
+      />
+      <button type="submit">Upload PDF</button>
     </form>
   </body>
 </html>

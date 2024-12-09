@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PDF Results</title>
+  </head>
+  <body>
+    <h1>Summarization and Questions</h1>
+    {% for chapter, content in results.items() %}
+    <h2>{{ chapter }}</h2>
+    <h3>Summary:</h3>
+    <div>{{ content.summary }}</div>
+    <h3>Questions:</h3>
+    <ul>
+      {% for question in content.questions.splitlines() %}
+      <li>{{ question }}</li>
+      {% endfor %}
+    </ul>
+    {% endfor %}
+  </body>
+</html>

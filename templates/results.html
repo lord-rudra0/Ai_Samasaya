@@ -8,18 +8,28 @@
   <body>
     <h1>Answer Feedback</h1>
 
-    {% for chapter, feedback in feedback.items() %}
-    <h2>{{ chapter }}</h2>
-    <ul>
-      {% for item in feedback %}
-      <li>
-        <p><strong>Question:</strong> {{ item['question'] }}</p>
-        <p><strong>Your Answer:</strong> {{ item['answer'] }}</p>
-        <p><strong>Feedback:</strong> {{ item['feedback'] }}</p>
-      </li>
-      {% endfor %}
-    </ul>
-    {% endfor %}
+    <form action="/check_answers" method="post">
+      {% for chapter, data in results.items() %}
+      <h3>{{ chapter }}</h3>
+      <p>{{ data['summary'] }}</p>
+
+      {% for question in data['questions'] %}
+      <div>
+        <p>{{ question['question'] }}</p>
+        {% for idx, option in enumerate(question['options']) %}
+        <label>
+          <input
+            type="radio"
+            name="{{ chapter }}_q{{ loop.index }}"
+            value="{{ idx+1 }}"
+          />
+          {{ option }} </label
+        ><br />
+        {% endfor %}
+      </div>
+      {% endfor %} {% endfor %}
+      <button type="submit">Submit Answers</button>
+    </form>
 
     <a href="/">Go back to upload page</a>
   </body>

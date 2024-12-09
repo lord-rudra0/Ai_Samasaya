@@ -75,7 +75,7 @@ def summarize_text(text):
     return response.text
 
 # Function to generate questions based on chapter content
-def generate_questions(text, question, user_answer ):
+def generate_questions(text):
     model = genai.GenerativeModel("gemini-1.5-flash")
     prompt = f"""
     Act like a professional teacher and summarize the following text in a way that is:
@@ -90,8 +90,7 @@ def generate_questions(text, question, user_answer ):
     Each question should be challenging and engaging, encouraging students to think critically and apply their knowledge.
     each question should be ask for answer when answer is entered it should show if it is correct or not.
     Here is the text to generate questions from:
-    Question: {question}
-    User's answer: {user_answer}
+    
     Provide 'Correct' if the answer is correct, or 'Incorrect' if the answer is wrong.
     
      \n\n{text}
@@ -130,16 +129,23 @@ def handle_pdf():
     results = {}
     for chapter, content in chapters.items():
         summary = summarize_text(content)
-        questions = generate_questions(content)
+        questions = generate_questions(content)  # Only pass content, no need for question or user_answer
         results[chapter] = {"summary": summary, "questions": questions}
 
     # Render results in pdf.html
     return render_template("pdf.html", results=results)
 
+
 @app.route("/check_answers", methods=["POST"])
-def check_answers(results, validate_answer):
+def check_answers():
     user_answers = request.form
     feedback = {}
+
+    # Example function to validate answer; replace with actual logic
+    def validate_answer(question, answer):
+        # You can modify this function to check the correctness of answers.
+        correct_answers = { "Question 1": 2, "Question 2": 1 }  # Example correct answers
+        return "Correct" if correct_answers.get(question) == int(answer) else "Incorrect"
 
     # For each chapter, check the answers
     for chapter, data in user_answers.items():
@@ -155,6 +161,7 @@ def check_answers(results, validate_answer):
         feedback[chapter] = feedback_for_chapter
 
     return render_template("results.html", feedback=feedback)
+
 
 
 if __name__ == '__main__':

@@ -1,5 +1,5 @@
 import google.generativeai as genai
-from flask import Flask, request, render_template, jsonify, Response, redirect, url_for, send_from_directory, send_file, make_response, abort
+from flask import Flask, request, render_template, jsonify, Response, redirect, url_for, send_from_directory, send_file, make_response, abort, session
 import os
 import pdfplumber
 from google.cloud import aiplatform
@@ -9,6 +9,7 @@ app = Flask(__name__)
 
 # Load environment variables
 load_dotenv()
+
 
 genai.configure(api_key=os.getenv("GOGGLE_API_KEY"))
 
@@ -90,8 +91,7 @@ def generate_questions(text):
     Each question should be challenging and engaging, encouraging students to think critically and apply their knowledge.
     each question should be ask for answer when answer is entered it should show if it is correct or not.
     Here is the text to generate questions from:
-    
-    Provide 'Correct' if the answer is correct, or 'Incorrect' if the answer is wrong.
+    generate 5 mcq from the summary of the chapter.
     
      \n\n{text}
     """
@@ -106,7 +106,7 @@ def home():
     return render_template("index.html")
 
 
-# Route to handle the uploaded PDF
+
 @app.route('/pdf', methods=['POST'])
 def handle_pdf():
     if 'pdf' not in request.files:
@@ -116,42 +116,41 @@ def handle_pdf():
     if pdf_file.filename == '':
         return render_template("error.html", message="No file selected.")
 
-    # Save the uploaded file
+    
     pdf_path = os.path.join(UPLOAD_FOLDER, pdf_file.filename)
     pdf_file.save(pdf_path)
 
-    # Extract text from the uploaded PDF
+    
     text = extract_text_from_pdf(pdf_path)
 
-    # Divide the text into chapters
+
     chapters = divide_into_chapters(text)
 
     results = {}
     for chapter, content in chapters.items():
         summary = summarize_text(content)
-        questions = generate_questions(content)  # Only pass content, no need for question or user_answer
+        questions = generate_questions(content)  
         results[chapter] = {"summary": summary, "questions": questions}
 
-    # Render results in pdf.html
+    
     return render_template("pdf.html", results=results)
 
 
 @app.route("/check_answers", methods=["POST"])
 def check_answers():
+    # Retrieve the results from session
+    results = session.get('results', {})
+
     user_answers = request.form
     feedback = {}
 
-    # Example function to validate answer; replace with actual logic
     def validate_answer(question, answer):
-        # You can modify this function to check the correctness of answers.
-        correct_answers = { "Question 1": 2, "Question 2": 1 }  # Example correct answers
+        correct_answers = {"Question 1": 2, "Question 2": 1}  # Placeholder for actual validation logic
         return "Correct" if correct_answers.get(question) == int(answer) else "Incorrect"
 
-    # For each chapter, check the answers
     for chapter, data in user_answers.items():
         feedback_for_chapter = []
         for question_id, answer in data.items():
-            # Get the question from the `results` data based on chapter and question_id
             question_text = results.get(chapter, {}).get('questions', {}).get(question_id, '')
             feedback_for_chapter.append({
                 'question': question_text,
@@ -161,6 +160,7 @@ def check_answers():
         feedback[chapter] = feedback_for_chapter
 
     return render_template("results.html", feedback=feedback)
+
 
 
 

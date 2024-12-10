@@ -46,8 +46,6 @@ def summarize_text(text):
         2.  Short and simple, covering all the important points.
         3. Easy to understand for students, using clear and concise language.
         4. Breaking down the text into chapters with clear headings for each chapter.
-        5. each chapter should show in different paragraph. and start from new line.
-        if there is a topic then give atleast 2-3 lines about it.
         5. Including all the important keywords and concepts, explained in an easy-to-digest manner.
         6. Including examples and illustrations to help students understand the concepts better. but not too many. and not too complex. and keep sort summary.
         7. Including summaries, bullet points, or key takeaways at the end of each chapter. 
@@ -64,8 +62,7 @@ def summarize_text(text):
         18. if there is a principle then give atleast 2-3 lines about it.
         19. if there is a theorem then give atleast 2-3 lines about it.
         20. after each chapter give  space and start from new line. 
-        21. divide the text into chapters with clear headings for each chapter.
-        
+
         Here is the text to summarize:
 
     {text}
@@ -79,8 +76,8 @@ def generate_questions(text):
     model = genai.GenerativeModel("gemini-1.5-flash")
     prompt = f"""
     Act like a professional teacher and summarize the following text in a way that is:
-    your teaching a class and you want to ask questions from the following text.
-    Generate  5 random quiz questions based on the following text:
+    
+    Generate  5 to 10 random quiz questions based on the following text:
     each question should be unique and should test the students' understanding of the concepts discussed in the text.
     Each question should be clear, concise, and easy to understand, with a single correct answer.
     each question should be mcq type and should have 4 options. 
@@ -89,6 +86,10 @@ def generate_questions(text):
     Each question should be well-structured, with proper grammar, punctuation, and spelling.
     Each question should be challenging and engaging, encouraging students to think critically and apply their knowledge.
     each question should be ask for answer when answer is entered it should show if it is correct or not.
+    each time when refresh the page it should show different questions.
+    next 5 questions should be different from previous 5 questions.
+    and next 5 questions should be 2 or 3 line questions. not a mcq type.
+    give answer for each question.
     Here is the text to generate questions from:
     
      \n\n{text}
@@ -97,7 +98,7 @@ def generate_questions(text):
    
     response = model.generate_content(prompt)
     return response.text
-    
+
 # Home route
 @app.route('/')
 def home():

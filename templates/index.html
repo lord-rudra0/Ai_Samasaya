@@ -1,22 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PDF Question Generator</title>
+    <title>PDF Summarization and QA</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #eef2f3;
+        color: #333;
+      }
+      h1 {
+        text-align: center;
+        margin-top: 50px;
+        color: #2b6777;
+      }
+      form {
+        max-width: 500px;
+        margin: 20px auto;
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      input[type="file"] {
+        display: block;
+        margin: 20px auto;
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 14px;
+      }
+      button {
+        background-color: #2b6777;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+      }
+      button:hover {
+        background-color: #1f4f5e;
+      }
+      footer {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 14px;
+        color: #777;
+      }
+    </style>
   </head>
   <body>
-    <h1>Upload Your PDF for Summary and Quiz</h1>
-    <form action="/pdf" method="post" enctype="multipart/form-data">
-      <label for="pdf">Choose PDF:</label>
-      <input
-        type="file"
-        id="pdf"
-        name="pdf"
-        accept="application/pdf"
-        required
-      />
-      <button type="submit">Upload PDF</button>
+    <h1>Upload a PDF for Summarization and QA</h1>
+    <form action="/pdf" method="POST" enctype="multipart/form-data">
+      <input type="file" name="pdf" accept="application/pdf" required />
+      <button type="submit">Upload and Process</button>
     </form>
+    <footer>&copy; 2024 AI Samasya Tools</footer>
   </body>
 </html>

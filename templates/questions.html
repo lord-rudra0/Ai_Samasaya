@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Quiz</title>
+  </head>
+  <body>
+    <h1>Quiz</h1>
+    <form action="/verify" method="POST">
+      {% for i, q in enumerate(questions) %}
+      <div>
+        <p>{{ i + 1 }}. {{ q.question }}</p>
+        {% for option in q.options %}
+        <input
+          type="radio"
+          name="question_{{ i }}"
+          value="{{ option.split('.')[0] }}"
+          required
+        />
+        <label>{{ option }}</label><br />
+        {% endfor %}
+      </div>
+      {% endfor %}
+      <button type="submit">Submit</button>
+    </form>
+  </body>
+</html>

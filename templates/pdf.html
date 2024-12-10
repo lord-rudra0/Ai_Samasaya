@@ -1,37 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PDF Summary and Quiz</title>
+    <title>PDF Results</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f7f9fc;
+        color: #333;
+      }
+      h1 {
+        text-align: center;
+        margin-top: 40px;
+        color: #2b6777;
+      }
+      h2 {
+        color: #1f4f5e;
+        margin-top: 30px;
+      }
+      h3 {
+        color: #444;
+        font-size: 18px;
+      }
+      div,
+      ul {
+        max-width: 800px;
+        margin: 20px auto;
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      ul {
+        list-style-type: none;
+        padding: 0;
+      }
+      li {
+        margin: 15px 0;
+        font-size: 16px;
+      }
+      li::before {
+        content: "• ";
+        color: #2b6777;
+        font-weight: bold;
+      }
+      span.chapter {
+        font-weight: bold;
+        color: #d9534f;
+      }
+    </style>
   </head>
   <body>
-    <h1>PDF Summary and Quiz</h1>
-
-    {% for chapter, data in results.items() %}
-    <h2>{{ chapter }}</h2>
+    <h1>Summarization and Questions</h1>
+    {% for chapter, content in results.items() %}
+    <h2><span class="chapter">{{ chapter }}</span></h2>
     <h3>Summary:</h3>
-    <p>{{ data['summary'] }}</p>
-
+    <div>{{ content.summary }}</div>
     <h3>Questions:</h3>
-    <form action="/check_answers" method="post">
-      {% for question in data['questions'] %}
-      <div>
-        <p>{{ question['question'] }}</p>
-        {% for idx, option in enumerate(question['options']) %}
-        <label>
-          <input
-            type="radio"
-            name="{{ chapter }}_q{{ loop.index }}"
-            value="{{ idx+1 }}"
-          />
-          {{ option }} </label
-        ><br />
-        {% endfor %}
-      </div>
+    <ul>
+      {% for question in content.questions.splitlines() %}
+      <li>{{ question }}</li>
       {% endfor %}
-      <button type="submit">Submit Answers</button>
-    </form>
+    </ul>
     {% endfor %}
+    <footer
+      style="text-align: center; margin-top: 30px; font-size: 14px; color: #777"
+    >
+      &copy; 2024 AI Samasya Tools
+    </footer>
   </body>
 </html>

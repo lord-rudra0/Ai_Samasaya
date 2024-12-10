@@ -1,3 +1,4 @@
 {
-  "cSpell.words": ["pdfplumber"]
+  "cSpell.words": ["pdfplumber"],
+  "git.ignoreLimitWarning": true
 }

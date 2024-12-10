@@ -1,73 +1,115 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PDF Results</title>
     <style>
       body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
         margin: 0;
-        padding: 0;
-        background-color: #f7f9fc;
-        color: #333;
+        padding: 20px;
       }
       h1 {
+        color: #333;
         text-align: center;
-        margin-top: 40px;
-        color: #2b6777;
       }
-      h2 {
-        color: #1f4f5e;
-        margin-top: 30px;
-      }
-      h3 {
-        color: #444;
-        font-size: 18px;
-      }
-      div,
-      ul {
-        max-width: 800px;
-        margin: 20px auto;
-        background: #ffffff;
-        padding: 20px;
+      .chapter {
+        margin-bottom: 30px;
+        background-color: #fff;
         border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 20px;
       }
-      ul {
-        list-style-type: none;
-        padding: 0;
+      .chapter h2 {
+        color: #2c3e50;
+        font-size: 24px;
+        margin-bottom: 10px;
       }
-      li {
-        margin: 15px 0;
+      .chapter h3 {
+        color: #2980b9;
+        font-size: 20px;
+        margin-bottom: 10px;
+      }
+      .summary {
         font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 20px;
       }
-      li::before {
-        content: "• ";
-        color: #2b6777;
+      .questions {
+        font-size: 16px;
+        margin-top: 20px;
+      }
+      .questions ul {
+        list-style-type: none;
+        padding-left: 0;
+      }
+      .questions li {
+        margin-bottom: 10px;
+      }
+      .video-container {
+        margin-top: 20px;
+        text-align: center;
+      }
+      video {
+        width: 100%;
+        max-width: 600px;
+        border-radius: 8px;
+      }
+      .error {
+        color: red;
         font-weight: bold;
       }
-      span.chapter {
-        font-weight: bold;
-        color: #d9534f;
+      .download-link {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #2980b9;
+        color: white;
+        border-radius: 4px;
+        text-decoration: none;
+      }
+      .download-link:hover {
+        background-color: #3498db;
       }
     </style>
   </head>
   <body>
     <h1>Summarization and Questions</h1>
+
     {% for chapter, content in results.items() %}
-    <h2><span class="chapter">{{ chapter }}</span></h2>
-    <h3>Summary:</h3>
-    <div>{{ content.summary }}</div>
-    <h3>Questions:</h3>
-    <ul>
-      {% for question in content.questions.splitlines() %}
-      <li>{{ question }}</li>
-      {% endfor %}
-    </ul>
+    <div class="chapter">
+      <h2><strong style="color: #e74c3c">{{ chapter }}</strong></h2>
+
+      <h3>Summary:</h3>
+      <div class="summary">{{ content.summary }}</div>
+
+      <h3>Questions:</h3>
+      <div class="questions">
+        <ul>
+          {% for question in content.questions.splitlines() %}
+          <li>{{ question }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      {% if content.video_path %}
+      <div class="video-container">
+        <h3>Hand Sign Video for {{ chapter }}:</h3>
+        <video controls>
+          <source src="{{ content.video_path }}" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <br />
+        <a href="{{ content.video_path }}" class="download-link" download
+          >Download Video</a
+        >
+      </div>
+      {% else %}
+      <div class="error">No video available for this chapter.</div>
+      {% endif %}
+    </div>
     {% endfor %}
-    <footer
-      style="text-align: center; margin-top: 30px; font-size: 14px; color: #777"
-    >
-      &copy; 2024 AI Samasya Tools
-    </footer>
   </body>
 </html>

@@ -46,11 +46,45 @@
       button:hover {
         background-color: #1f4f5e;
       }
-      footer {
+      .chapter {
+        margin-top: 30px;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .chapter h2 {
+        color: #2b6777;
+      }
+      .questions {
         margin-top: 20px;
+      }
+      .questions h3 {
+        color: #2b6777;
+      }
+      .questions ul {
+        list-style-type: none;
+        padding: 0;
+      }
+      .questions li {
+        background: #f5f5f5;
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 5px;
+      }
+      footer {
+        margin-top: 30px;
         text-align: center;
         font-size: 14px;
         color: #777;
+      }
+      .video-container {
+        margin-top: 20px;
+        text-align: center;
+      }
+      .video-container video {
+        max-width: 100%;
+        height: auto;
       }
     </style>
   </head>
@@ -60,6 +94,37 @@
       <input type="file" name="pdf" accept="application/pdf" required />
       <button type="submit">Upload and Process</button>
     </form>
+
+    {% if results %}
+    <div class="results">
+      {% for chapter, data in results.items() %}
+      <div class="chapter">
+        <h2>{{ chapter }}</h2>
+        <p><strong>Summary:</strong></p>
+        <p>{{ data['summary'] }}</p>
+
+        <div class="questions">
+          <h3>Quiz Questions:</h3>
+          <ul>
+            {% for question in data['questions'].split('\n') %} {% if question
+            %}
+            <li>{{ question }}</li>
+            {% endif %} {% endfor %}
+          </ul>
+        </div>
+
+        <div class="video-container">
+          <h3>Hand Sign Video:</h3>
+          <video controls>
+            <source src="{{ data['video_url'] }}" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
     <footer>&copy; 2024 AI Samasya Tools</footer>
   </body>
 </html>
